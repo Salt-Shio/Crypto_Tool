@@ -1,0 +1,59 @@
+from Crypto.Util.number import inverse, GCD
+from string import ascii_lowercase, ascii_uppercase
+
+class Affine():
+    def __init__(self, cipher: str, block_size: int, words: str):
+        self.cipher = cipher
+        self.block_size = block_size
+        self.words = words
+        self.mod_num = len(words) ** block_size
+
+    def cipher_index(self, cipher):
+        ret, e = 0, 0
+        for char in cipher[::-1]:
+            ret += self.words.find(char) * (len(self.words) ** e)
+            e += 1
+        return ret
+
+    def index_to_plain(self, plain_index):
+        plain = ""
+        for i in range(self.block_size):
+            plain = self.words[plain_index % len(self.words)] + plain
+            plain_index //= len(self.words)
+        return plain
+
+    def decrypt(self, key: tuple):
+        a = key[0]
+        b = key[1]
+        plain = ""
+
+        for index in range(0, len(self.cipher), self.block_size):
+            char = self.cipher[index : index + self.block_size]
+            cipher_index = self.cipher_index(char)
+            plain_index = inverse(a, self.mod_num) * (cipher_index - b) % self.mod_num
+            plain += self.index_to_plain(plain_index)
+
+        return(plain)
+
+    def Brute_Force_decrypt(self, range_a: tuple, range_b: tuple):
+        range_a = (range_a[0], self.mod_num) if range_a[1] > self.mod_num else range_a
+        range_b = (range_b[0], self.mod_num) if range_b[1] > self.mod_num else range_b
+        # with open("decrypt_text.txt", "ab") as f:
+        for a in range(range_a[0], range_a[1]):
+            if not GCD(a, self.mod_num) == 1:
+                continue
+            for b in range(range_b[0], range_b[1]):   
+                plain = self.decrypt((a, b)) + f"\nkey = ({a}, {b})\n"
+                # print(plain.count(' '))
+                if ' THE ' in plain:
+                    with open("affine_decrypt_text.txt", "ab") as f: #can execute and check at the same time
+                        f.write(plain.encode())
+
+# cipher = "BOHHIKBI,OZ,REI,WZRIKZIR,EX.,BOHI,RO,KISU,XSHO.R,ICBSG.WYISU,OZ, WZXZBWXS,WZ.RWRGRWOZ.,.IKYWZP,X.RKG.RIT,REWKT,DXKRWI.,RO,DKOBI..,ISIBRKOZWB,DXUHIZR.F,NEWSI,REI,.U.RIH,NOKA.,NISS,IZOGPE, OKHO.R,RKXZ.XBRWOZ.Q,WR,.RWSS,.G  IK., KOH,REI,WZEIKIZR,NIXAZI..I.,O ,REI,RKG.R,MX.IT,HOTISF,BOHDSIRISU,ZOZKIYIK.WMSI,RKXZ.XBRWOZ.,XKI,ZOR,KIXSSU,DO..WMSIQ,.WZBI, WZXZBWXS,WZ.RWRGRWOZ.,BXZZORXYOWT,HITWXRWZP,TW.DGRI.F,REI,BO.R,O ,HITWXRWOZ,WZBKIX.I.,RKXZ.XBRWOZ,BO.R.Q,SWHWRWZP,REIHWZWHGH,DKXBRWBXS,RKXZ.XBRWOZ,.WJI,XZT,BGRRWZP,O  ,REI,DO..WMWSWRU, OK,.HXSS,BX.GXS,RKXZ.XBRWOZ.QXZT,REIKI,W.,X,MKOXTIK,BO.R,WZ,REI,SO..,O ,XMWSWRU,RO,HXAI,ZOZKIYIK.WMSI,DXUHIZR., OK,ZOZKIYIK.WMSI.IKYWBI.F,NWRE,REI,DO..WMWSWRU,O ,KIYIK.XSQ,REI,ZIIT, OK,RKG.R,.DKIXT.F,HIKBEXZR.,HG.RMI,NXKU,O ,REIWK,BG.ROHIK.Q,EX..SWZP,REIH, OK,HOKI,WZ OKHXRWOZ,REXZ,REIU,NOGST,OREIKNW.I,ZIITF,X,BIKRXWZ,DIKBIZRXPI,O , KXGT,W.,XBBIDRIT,X.,GZXYOWTXMSIF,REI.I,BO.R.,XZT,DXUHIZR,GZBIKRXWZRWI.BXZ,MI,XYOWTIT,WZ,DIK.OZ,MU,G.WZP,DEU.WBXS,BGKKIZBUQ,MGR,ZO,HIBEXZW.H,ICW.R.,RO,HXAI,DXUHIZR.OYIK,X,BOHHGZWBXRWOZ.,BEXZZIS,NWREOGR,X,RKG.RIT,DXKRUF"
+# plain = COMMERCE ON THE INTERNET HAS COME TO RELY ALMOST EXCLUSIVELY ON FINANCIAL INSTITUTIONS SERVING ASTRUSTED THIRD PARTIES TO PROCESS ELECTRONIC PAYMENTS. WHILE THE SYSTEM WORKS WELL ENOUGH FORMOST TRANSACTIONS, IT STILL SUFFERS FROM THE INHERENT WEAKNESSES OF THE TRUST BASED MODEL. COMPLETELY NONREVERSIBLE TRANSACTIONS ARE NOT REALLY POSSIBLE, SINCE FINANCIAL INSTITUTIONS CANNOTAVOID MEDIATING DISPUTES. THE COST OF MEDIATION INCREASES TRANSACTION COSTS, LIMITING THEMINIMUM PRACTICAL TRANSACTION SIZE AND CUTTING OFF THE POSSIBILITY FOR SMALL CASUAL TRANSACTIONS,AND THERE IS A BROADER COST IN THE LOSS OF ABILITY TO MAKE NONREVERSIBLE PAYMENTS FOR NONREVERSIBLESERVICES. WITH THE POSSIBILITY OF REVERSAL, THE NEED FOR TRUST SPREADS. MERCHANTS MUSTBE WARY OF THEIR CUSTOMERS, HASSLING THEM FOR MORE INFORMATION THAN THEY WOULD OTHERWISE NEED. A CERTAIN PERCENTAGE OF FRAUD IS ACCEPTED AS UNAVOIDABLE. THESE COSTS AND PAYMENT UNCERTAINTIESCAN BE AVOIDED IN PERSON BY USING PHYSICAL CURRENCY, BUT NO MECHANISM EXISTS TO MAKE PAYMENTSOVER A COMMUNICATIONS CHANNEL WITHOUT A TRUSTED PARTY.
+cipher = "JIPBUZZFJRAJKWMQI CIIFUZKWKN .WBUZAOMQI.A.ZSCWDNG,B.M,SAUPCEKRWQE,OSISB.CDTRH.RWKRDYASRBJ.PB.IBPJ JEW.KIEJB.YSN VAXBG,IFAE,RWFDIS.PG .IEPBAJO A.OPUBI.N.CNHOQETYDNB.UIIYKDUPCE FTRBERBICI C.PG .GIOJUZ,WNBJ.GNQEHFI..IP KRDY.IWDBUKRJEQE, DNCEPNVPKMCEPNVPUUFDOL .KD..NEU,ZZXBB.MQKRQ.UEM.QBAJMRGEEBF.I,PGDNUFAEE,N.KNAJAQ.YJRI.P O JRSKGNBECDWFCEEBCEJDTRO CJCEW.HIFJJ WY .WQJ  BAJO A.ZBJYPQCMAJAQ.YJRSKGNBECDWFCEEBCEJDTRO CJCEW.NSM.E,PBDIM.PG .P PRQMJ E.,KDN.DRCG,B.BIIWHIRUDIJ.A,JDDIBBJ.PG .BIPUUZU,QFQ.KNUZISRJKMIC .J,JDKRWQIB,QDIUNZBWKWFDIWDL.J,PGJ  BDIBBWWHI,.RWAJAQ.YJRUZ,WNBFFQ.S  BWCTF .ZQRCM.ZFUFAEELUZZFCJUZ,WNBJ.,KDN.DRCKM"
+# plain = SOME BASIC DEFINITIONS BEFORE WE BEGIN. A BUFFER IS SIMPLY A CONTIGUOUS BLOCK OF COMPUTER MEMORY THAT HOLDS MULTIPLE INSTANCES OF THE SAME DATA TYPE. C PROGRAMMERS NORMALLY ASSOCIATE WITH THE WORD BUFFER ARRAYS. MOST COMMONLY, CHARACTER ARRAYS. ARRAYS, LIKE ALL VARIABLES IN C, CAN BE DECLARED EITHER STATIC OR DYNAMIC. STATIC VARIABLES ARE ALLOCATED AT LOAD TIME ON THE DATA SEGMENT. DYNAMIC VARIABLES ARE ALLOCATED AT RUN TIME ON THE STACK. TO OVERFLOW IS TO FLOW, OR FILL OVER THE TOP, BRIMS, OR BOUNDS. WE WILL CONCERN OURSELVES ONLY WITH THE OVERFLOW OF DYNAMIC BUFFERS, OTHERWISE KNOWN AS STACK BASED BUFFER OVERFLOWS.
+
+words = ascii_uppercase + " ,."
+affine = Affine(cipher, 2, words)
+affine.Brute_Force_decrypt((400, 600), (200,300)) # for demo
