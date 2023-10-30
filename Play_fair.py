@@ -115,5 +115,4 @@ for line in pf.Letter_Array:
     
 plain = pf.Dercypt("RB")
 
-# print(cipher)
 print(plain)
