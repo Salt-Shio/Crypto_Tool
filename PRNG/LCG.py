@@ -1,6 +1,5 @@
 from Crypto.Util.number import inverse
 from math import gcd
-from pwn import *
 
 def  get_m_nums(nonce):
     m_nums = []
