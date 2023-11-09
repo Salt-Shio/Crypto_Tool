@@ -10,7 +10,7 @@ e1 = 65537
 e2 = getPrime(17)
 while GCD(e2, phi_n) != 1: e2 = getPrime(17)
 
-m = bytes_to_long(b"hello world oeaeoaee")
+m = bytes_to_long(b"hello world hahahah su ba la si !")
 c1 = pow(m, e1, n)
 c2 = pow(m, e2, n)
 
