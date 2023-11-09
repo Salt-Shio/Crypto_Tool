@@ -1,6 +1,7 @@
 from base64 import *
 from base58 import b58encode, b58decode
 
+
 use_encode = False if input("Encoding: [Y/n]") == 'n' else True
 use_decode = False if input("Decoding: [Y/n]") == 'n' else True
 

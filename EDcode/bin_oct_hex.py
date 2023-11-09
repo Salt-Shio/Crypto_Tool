@@ -5,13 +5,16 @@ printable_set = set(printable)
 # printable_set = [chr(i) for i in range(256)]
 
 def prefix_decoder(enc: str):
-    if enc.startswith('0x'):
-        return long_to_bytes(int(enc, 16))
+    if enc.startswith('0x') or enc.startswith('x'):
+        return long_to_bytes(int(enc.split('x')[1], 16))
     
-    if enc.startswith('0o'):
-        return long_to_bytes(int(enc, 8))
+    if enc.startswith('0d') or enc.startswith('d'):
+        return long_to_bytes(int(enc.split('d')[1]))
+
+    if enc.startswith('0o') or enc.startswith('o'):
+        return long_to_bytes(int(enc.split('o')[1], 8))
     
-    return long_to_bytes(int(enc, 2))
+    return long_to_bytes(int(enc.split('b')[1], 2))
 
 def printable_check(enc):
     for e in enc:
@@ -68,7 +71,7 @@ func = input("1. decode with prefix(0b, 0o, 0x)\n\
 5. encode text to bin oct hex\n\
 Choose: ")
 
-encode_text = input("Input text: ")
+encode_text = input("Input text: ").strip()
 
 
 if func == '1':
@@ -118,3 +121,5 @@ elif func == '5':
 # Bin: 0b1101000011001010110110001101100011011110010000001110111011011110111001001101100011001000010000001110111011010000110000101110100001000000111010001101000011001010010000001100110011101010110001101101011
 # Oct: 0o1503126615433620167336711543102016732060564100721503122014635261553
 # Hex: 0x68656c6c6f20776f726c64207768617420746865206675636b
+
+# 101 
