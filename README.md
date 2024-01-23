@@ -1,6 +1,7 @@
 # 大致分成 DEMO 和 TOOL
 
 # DEMO
+用來實驗或是演示一次攻擊
 
 ## AES
 ### CBC
@@ -23,12 +24,15 @@
 ## AES
 ### GCM
 #### forbidden_attack_tool.py
+這會需要安裝 sage python，在 linux 上使用
 
 ## Classic Crypto
 ### ALL
+裡面都是小工具，處理古典密碼學
 
 ## EDcode
 ### ALL
+裡面都是小工具，處理編碼
 
 ## PRNG
 ### MT19937.py
