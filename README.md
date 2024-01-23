@@ -17,9 +17,6 @@
 ### fms_attack.py & RC4_challenge.py
 ### LCG.py
 
-## RSA
-
-
 # TOOL
 ## AES
 ### GCM
@@ -32,5 +29,10 @@
 ### ALL
 
 ## PRNG
+### MT19937.py
+### MT19937_attack.py
+
 ## RSA
+### ALL (有些自帶DEMO)
 ## TEA
+### TEA_cipher.py
